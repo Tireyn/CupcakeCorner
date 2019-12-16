@@ -12,6 +12,8 @@ struct CheckoutView: View {
     @ObservedObject var order: Order
     @State private var confirmationMessage = ""
     @State private var showingConfirmation = false
+    @State private var didError = false
+    @State private var errorMessage = ""
     
     var body: some View {
         GeometryReader { geo in
@@ -36,6 +38,9 @@ struct CheckoutView: View {
         .alert(isPresented: $showingConfirmation) {
             Alert(title: Text("Thank you!"), message: Text(confirmationMessage), dismissButton: .default(Text("OK")))
         }
+        .alert(isPresented: $didError) {
+            Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .default(Text("Try Again")))
+        }
     }
     
     
@@ -53,7 +58,8 @@ struct CheckoutView: View {
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data else {
-                print("No data in response: \(error?.localizedDescription ?? "Unknown error.")")
+                self.errorMessage = "\(error?.localizedDescription ?? "Unknown error.")"
+                self.didError = true
                 return
             }
             

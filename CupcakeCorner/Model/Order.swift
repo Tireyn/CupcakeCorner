@@ -36,7 +36,9 @@ class Order: ObservableObject, Codable {
     @Published var postalCode = ""
     
     var hasValidAddress: Bool {
-        if name.isEmpty || streetAddress.isEmpty || postalCode.isEmpty {
+        if name.isEmpty || streetAddress.isEmpty || city.isEmpty || postalCode.isEmpty {
+            return false
+        } else if isWhiteSpace(check: name) || isWhiteSpace(check: streetAddress) || isWhiteSpace(check: city) || isWhiteSpace(check: postalCode) {
             return false
         }
         
@@ -86,5 +88,13 @@ class Order: ObservableObject, Codable {
         try container.encode(streetAddress, forKey: .streetAddress)
         try container.encode(city, forKey: .city)
         try container.encode(postalCode, forKey: .postalCode)
+    }
+    
+    func isWhiteSpace(check string: String) -> Bool {
+        if !string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return false
+        }
+        
+        return true
     }
 }
